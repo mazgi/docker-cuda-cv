@@ -43,6 +43,7 @@ RUN cd /openmpi && ./autogen.pl && ./configure --with-cuda
 RUN cd /openmpi && make -j$(nproc) && make install
 
 # Install Chainer
+ENV CPATH=/usr/local/cuda/include:/usr/local/include:$CPATH
 RUN pip3 install cupy==${DOCKERBUILD_CUPY_VERSION} chainer==${DOCKERBUILD_CHAINER_VERSION} chainermn
 
 # Clean up
