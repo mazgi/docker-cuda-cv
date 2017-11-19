@@ -40,10 +40,9 @@ RUN cd /opencv/build && make -j$(nproc) && make install && ldconfig
 RUN curl -L -o /openmpi.tar.gz https://github.com/open-mpi/ompi/archive/v${DOCKERBUILD_OPENMPI_VERSION}.tar.gz \
       && tar xf /openmpi.tar.gz -C / && mv /ompi-${DOCKERBUILD_OPENMPI_VERSION} /openmpi
 RUN cd /openmpi && ./autogen.pl && ./configure --with-cuda
-RUN cd /openmpi && make -j$(nproc) && make install
+RUN cd /openmpi && make -j$(nproc) && make install && ldconfig
 
 # Install Chainer
-ENV CPATH=/usr/local/cuda/include:/usr/local/include:$CPATH
 RUN pip3 install cupy==${DOCKERBUILD_CUPY_VERSION} chainer==${DOCKERBUILD_CHAINER_VERSION} chainermn
 
 # Clean up
