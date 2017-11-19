@@ -42,6 +42,13 @@ RUN curl -L -o /openmpi.tar.gz https://github.com/open-mpi/ompi/archive/v${DOCKE
 RUN cd /openmpi && ./autogen.pl && ./configure --with-cuda
 RUN cd /openmpi && make -j$(nproc) && make install && ldconfig
 
+ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+ENV CPATH=/usr/local/include:$CPATH
+ENV CUDA_PATH=/usr/local/cuda
+ENV PATH=$CUDA_PATH/bin:$PATH
+ENV CPATH=$CUDA_PATH/include:$CPATH
+ENV LD_LIBRARY_PATH=$CUDA_PATH/lib64:$CUDA_PATH/lib:$LD_LIBRARY_PATH
+
 # Install Chainer
 RUN pip3 install cupy==${DOCKERBUILD_CUPY_VERSION} chainer==${DOCKERBUILD_CHAINER_VERSION} chainermn
 
