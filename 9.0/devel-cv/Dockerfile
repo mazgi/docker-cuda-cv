@@ -3,7 +3,7 @@ FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 ENV DOCKERBUILD_OPENCV_VERSION=3.3.0
 ENV DOCKERBUILD_OPENMPI_VERSION=3.0.0
 ENV DOCKERBUILD_CHAINER_VERSION=4.0.0b1
-ENV DOCKERBUILD_CUPY_VERSION=4.0.0b1
+ENV DOCKERBUILD_CUPY_VERSION=3.0.0a1
 
 # Install basic packages
 RUN apt update && apt install -y --no-install-recommends curl software-properties-common \
@@ -39,7 +39,8 @@ RUN pip3 install numpy \
   .. \
   && cd /opencv/build && make -j$(nproc) && make install && ldconfig \
 
-# Install Open MPI
+# Install Open MPI for ChainerMN
+# see: https://chainermn.readthedocs.io/en/latest/installation/guide.html
   && curl -L -o /openmpi.tar.gz https://github.com/open-mpi/ompi/archive/v${DOCKERBUILD_OPENMPI_VERSION}.tar.gz \
   && tar xf /openmpi.tar.gz -C / && mv /ompi-${DOCKERBUILD_OPENMPI_VERSION} /openmpi \
   && cd /openmpi && ./autogen.pl && ./configure --with-cuda \
