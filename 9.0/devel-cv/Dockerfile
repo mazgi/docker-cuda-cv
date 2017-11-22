@@ -6,7 +6,7 @@ ENV DOCKERBUILD_CHAINER_VERSION=4.0.0b1
 ENV DOCKERBUILD_CUPY_VERSION=3.0.0a1
 
 # Install basic packages
-RUN apt update && apt install -y --no-install-recommends curl software-properties-common \
+RUN apt update && apt install -y --no-install-recommends curl software-properties-common pkg-config \
 # Install python3 packages
   && apt install -y --no-install-recommends python3-dev python3-pip \
   && pip3 install --upgrade pip && pip3 install setuptools cython \
