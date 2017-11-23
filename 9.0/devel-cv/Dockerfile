@@ -14,6 +14,15 @@ RUN apt update && apt install -y --no-install-recommends curl software-propertie
   && apt install -y --no-install-recommends libnccl-dev \
 # Install other development packages
   && apt install -y --no-install-recommends cmake autoconf automake libtool flex \
+# Install OpenSSH server for Open MPI
+  && apt-get install -y --no-install-recommends openssh-server \
+  && mkdir /var/run/sshd \
+  && sed -i 's/Port 22/Port 10022/' /etc/ssh/sshd_config \
+  && mkdir /root/.ssh && chmod 700 /root/.ssh \
+  && echo 'Host *' > /root/.ssh/config \
+  && echo '  Port 10022' >> /root/.ssh/config \
+  && echo '  StrictHostKeyChecking no' >> /root/.ssh/config \
+  && echo '  UserKnownHostsFile /dev/null' >> /root/.ssh/config \
 
 # Install ffmpeg
   && add-apt-repository -y ppa:jonathonf/ffmpeg-3 && apt update && apt install -y --no-install-recommends ffmpeg \
