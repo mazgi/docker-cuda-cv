@@ -3,18 +3,18 @@ FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 ENV DOCKERBUILD_OPENCV_VERSION=3.3.0
 ENV DOCKERBUILD_OPENMPI_VERSION=3.0.0
 ENV DOCKERBUILD_CHAINER_VERSION=4.0.0b1
-ENV DOCKERBUILD_CUPY_VERSION=3.0.0a1
+ENV DOCKERBUILD_CUPY_VERSION=3.0.0b1
 
-# Install basic packages
-RUN apt update && apt install -y --no-install-recommends curl software-properties-common pkg-config \
-# Install python3 packages
+RUN : 'Install basic packages' \
+  && apt update && apt install -y --no-install-recommends curl software-properties-common pkg-config \
+  && : 'Install python3 packages' \
   && apt install -y --no-install-recommends python3-dev python3-pip \
   && pip3 install --upgrade pip && pip3 install setuptools cython \
-# Install NVIDIA packages
+  && : 'Install NVIDIA packages' \
   && apt install -y --no-install-recommends libnccl-dev \
-# Install other development packages
+  && : 'Install other development packages' \
   && apt install -y --no-install-recommends cmake autoconf automake libtool flex \
-# Install OpenSSH server for Open MPI
+  && : 'Install OpenSSH server for Open MPI' \
   && apt-get install -y --no-install-recommends openssh-server \
   && mkdir /var/run/sshd \
   && sed -i 's/Port 22/Port 10022/' /etc/ssh/sshd_config \
@@ -23,21 +23,19 @@ RUN apt update && apt install -y --no-install-recommends curl software-propertie
   && echo '  Port 10022' >> /root/.ssh/config \
   && echo '  StrictHostKeyChecking no' >> /root/.ssh/config \
   && echo '  UserKnownHostsFile /dev/null' >> /root/.ssh/config \
-
-# Install ffmpeg
+  && : 'Install ffmpeg' \
   && add-apt-repository -y ppa:jonathonf/ffmpeg-3 && apt update && apt install -y --no-install-recommends ffmpeg \
-
-# Clean up
+  && : 'Clean up' \
   && apt clean
 
-# OpenCV: Install numpy before build
-RUN pip3 install numpy \
-# OpenCV: Download sources
+RUN : 'OpenCV: Install numpy before build' \
+  && pip3 install numpy \
+  && : 'OpenCV: Download sources' \
   && curl -L -o /opencv.tar.gz https://github.com/opencv/opencv/archive/${DOCKERBUILD_OPENCV_VERSION}.tar.gz \
   && tar xf /opencv.tar.gz -C / && mv /opencv-${DOCKERBUILD_OPENCV_VERSION} /opencv \
   && curl -L -o /opencv_contrib.tar.gz https://github.com/opencv/opencv_contrib/archive/${DOCKERBUILD_OPENCV_VERSION}.tar.gz \
   && tar xf /opencv_contrib.tar.gz -C / && mv /opencv_contrib-${DOCKERBUILD_OPENCV_VERSION} /opencv_contrib \
-# OpenCV: make && install
+  && : 'OpenCV: make && install' \
   && mkdir /opencv/build && cd /opencv/build && cmake \
   -D CMAKE_BUILD_TYPE=RELEASE \
   -D CMAKE_INSTALL_PREFIX=/usr/local \
@@ -47,15 +45,13 @@ RUN pip3 install numpy \
   -D INSTALL_PYTHON_EXAMPLES=OFF \
   .. \
   && cd /opencv/build && make -j$(nproc) && make install && ldconfig \
-
-# Install Open MPI for ChainerMN
-# see: https://chainermn.readthedocs.io/en/latest/installation/guide.html
+  && : 'Install Open MPI for ChainerMN'
+  && : 'see: https://chainermn.readthedocs.io/en/latest/installation/guide.html'
   && curl -L -o /openmpi.tar.gz https://github.com/open-mpi/ompi/archive/v${DOCKERBUILD_OPENMPI_VERSION}.tar.gz \
   && tar xf /openmpi.tar.gz -C / && mv /ompi-${DOCKERBUILD_OPENMPI_VERSION} /openmpi \
   && cd /openmpi && ./autogen.pl && ./configure --with-cuda \
   && cd /openmpi && make -j$(nproc) && make install && ldconfig \
-
-# Clean up
+  && : 'Clean up' \
   && rm -rf /opencv.tar.gz /opencv /opencv_contrib.tar.gz /opencv_contrib /openmpi.tar.gz /openmpi
 
 ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
@@ -65,8 +61,8 @@ ENV PATH=$CUDA_PATH/bin:$PATH
 ENV CPATH=$CUDA_PATH/include:$CPATH
 ENV LD_LIBRARY_PATH=$CUDA_PATH/lib64:$CUDA_PATH/lib:$LD_LIBRARY_PATH
 
-# Install Chainer
-RUN pip3 install cupy==${DOCKERBUILD_CUPY_VERSION} chainer==${DOCKERBUILD_CHAINER_VERSION} chainermn
+RUN : 'Install Chainer' \
+  && pip3 install cupy==${DOCKERBUILD_CUPY_VERSION} chainer==${DOCKERBUILD_CHAINER_VERSION} chainermn
 
-# for SSHD
+# for sshd
 EXPOSE 10022
