@@ -45,8 +45,8 @@ RUN : 'OpenCV: Install numpy before build' \
   -D INSTALL_PYTHON_EXAMPLES=OFF \
   .. \
   && cd /opencv/build && make -j$(nproc) && make install && ldconfig \
-  && : 'Install Open MPI for ChainerMN'
-  && : 'see: https://chainermn.readthedocs.io/en/latest/installation/guide.html'
+  && : 'Install Open MPI for ChainerMN' \
+  && : 'see: https://chainermn.readthedocs.io/en/latest/installation/guide.html' \
   && curl -L -o /openmpi.tar.gz https://github.com/open-mpi/ompi/archive/v${DOCKERBUILD_OPENMPI_VERSION}.tar.gz \
   && tar xf /openmpi.tar.gz -C / && mv /ompi-${DOCKERBUILD_OPENMPI_VERSION} /openmpi \
   && cd /openmpi && ./autogen.pl && ./configure --with-cuda \
