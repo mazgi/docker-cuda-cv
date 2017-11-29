@@ -3,7 +3,7 @@ FROM nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 ENV DOCKERBUILD_OPENCV_VERSION=3.3.0
 ENV DOCKERBUILD_OPENMPI_VERSION=3.0.0
 ENV DOCKERBUILD_CHAINER_VERSION=4.0.0b1
-ENV DOCKERBUILD_CUPY_VERSION=3.0.0b1
+ENV DOCKERBUILD_CUPY_VERSION=4.0.0b1
 
 RUN : 'Install basic packages' \
   && apt update && apt install -y --no-install-recommends curl software-properties-common pkg-config \
