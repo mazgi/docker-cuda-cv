@@ -11,7 +11,7 @@ RUN : 'Install basic packages' \
   && apt install -y --no-install-recommends python3-dev python3-pip \
   && pip3 install --upgrade pip && pip3 install setuptools cython \
   && : 'Install NVIDIA packages' \
-  && apt install -y --no-install-recommends libnccl-dev \
+  && apt install -y --no-install-recommends libnccl-dev libcudnn7 \
   && : 'Install other development packages' \
   && apt install -y --no-install-recommends cmake autoconf automake libtool flex \
   && : 'Install OpenSSH server for Open MPI' \
