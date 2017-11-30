@@ -52,7 +52,9 @@ RUN : 'OpenCV: Install numpy before build' \
   && cd /openmpi && ./autogen.pl && ./configure --with-cuda \
   && cd /openmpi && make -j$(nproc) && make install && ldconfig \
   && : 'Clean up' \
-  && rm -rf /opencv.tar.gz /opencv /opencv_contrib.tar.gz /opencv_contrib /openmpi.tar.gz /openmpi
+  && rm -rf /opencv.tar.gz /opencv /opencv_contrib.tar.gz /opencv_contrib /openmpi.tar.gz /openmpi \
+  && : 'Create symlink' \
+  && cd /usr/local/cuda/lib64/stubs/ && ln -s libcuda.so libcuda.so.1
 
 ENV CUDA_PATH=/usr/local/cuda
 ENV PATH=$CUDA_PATH/bin:$PATH
