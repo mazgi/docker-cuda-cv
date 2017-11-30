@@ -4,6 +4,7 @@ ENV DOCKERBUILD_OPENCV_VERSION=3.3.0
 ENV DOCKERBUILD_OPENMPI_VERSION=3.0.0
 ENV DOCKERBUILD_CHAINER_VERSION=4.0.0b1
 ENV DOCKERBUILD_CUPY_VERSION=4.0.0b1
+ENV DOCKERBUILD_CHAINERMN_COMMIT='515bae109713ab3aee90e231939db183af34eeb0'
 
 RUN : 'Install basic packages' \
   && apt update && apt install -y --no-install-recommends curl software-properties-common pkg-config \
@@ -52,9 +53,7 @@ RUN : 'OpenCV: Install numpy before build' \
   && cd /openmpi && ./autogen.pl && ./configure --with-cuda \
   && cd /openmpi && make -j$(nproc) && make install && ldconfig \
   && : 'Clean up' \
-  && rm -rf /opencv.tar.gz /opencv /opencv_contrib.tar.gz /opencv_contrib /openmpi.tar.gz /openmpi \
-  && : 'Create symlink' \
-  && cd /usr/local/cuda/lib64/stubs/ && ln -s libcuda.so libcuda.so.1
+  && rm -rf /opencv.tar.gz /opencv /opencv_contrib.tar.gz /opencv_contrib /openmpi.tar.gz /openmpi
 
 ENV CUDA_PATH=/usr/local/cuda
 ENV PATH=$CUDA_PATH/bin:$PATH
@@ -62,7 +61,14 @@ ENV CPATH=$CUDA_PATH/include:/usr/local/include:$CPATH
 ENV LD_LIBRARY_PATH=$CUDA_PATH/lib64:/usr/local/lib:$LD_LIBRARY_PATH
 
 RUN : 'Install Chainer' \
-  && pip3 install cupy==${DOCKERBUILD_CUPY_VERSION} chainer==${DOCKERBUILD_CHAINER_VERSION} chainermn
+  && pip3 install cupy==${DOCKERBUILD_CUPY_VERSION} chainer==${DOCKERBUILD_CHAINER_VERSION}
+
+ADD patches/github.com/chainer/chainermn/chainermn-for-cupy-4.0.0b1.patch /tmp/chainermn-for-cupy-4.0.0b1.patch
+RUN : 'Install ChainerMN from source with patches' \
+  && curl -L -o /chainermn.tar.gz "https://github.com/chainer/chainermn/archive/${DOCKERBUILD_CHAINERMN_COMMIT}.tar.gz" \
+  && tar xf /chainermn.tar.gz -C / && mv "/chainermn-${DOCKERBUILD_CHAINERMN_COMMIT}" /chainermn \
+  && cd /chainermn && patch -p1 < /tmp/chainermn-for-cupy-4.0.0b1.patch \
+  && pip install -e /chainermn
 
 # for sshd
 EXPOSE 10022
