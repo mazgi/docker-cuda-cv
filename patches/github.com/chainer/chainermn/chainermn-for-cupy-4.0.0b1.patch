@@ -1,0 +1,16 @@
+diff --git a/chainermn/functions/batch_normalization.py b/chainermn/functions/batch_normalization.py
+index 5fec784..8f93026 100644
+--- a/chainermn/functions/batch_normalization.py
++++ b/chainermn/functions/batch_normalization.py
+@@ -11,7 +11,10 @@ import numpy
+ 
+ if cuda.cudnn_enabled:
+     cudnn = cuda.cudnn
+-    libcudnn = cudnn.cudnn
++    try:
++        libcudnn = cudnn.cudnn
++    except Exception:
++        libcudnn = cudnn.py_cudnn
+ 
+ 
+ def _as4darray(arr):
