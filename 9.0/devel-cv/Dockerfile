@@ -68,7 +68,8 @@ RUN : 'Install ChainerMN from source with patches' \
   && curl -L -o /chainermn.tar.gz "https://github.com/chainer/chainermn/archive/${DOCKERBUILD_CHAINERMN_COMMIT}.tar.gz" \
   && tar xf /chainermn.tar.gz -C / && mv "/chainermn-${DOCKERBUILD_CHAINERMN_COMMIT}" /chainermn \
   && cd /chainermn && patch -p1 < /tmp/chainermn-for-cupy-4.0.0b1.patch \
-  && pip install -e /chainermn
+  && pip install -e /chainermn \
+  && cd && rm -rf /chainermn /chainermn.tar.gz /tmp/chainermn-for-cupy-4.0.0b1.patch
 
 # for sshd
 EXPOSE 10022
