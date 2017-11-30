@@ -11,7 +11,7 @@ RUN : 'Install basic packages' \
   && apt install -y --no-install-recommends python3-dev python3-pip \
   && pip3 install --upgrade pip && pip3 install setuptools cython \
   && : 'Install NVIDIA packages' \
-  && apt install -y --no-install-recommends libnccl-dev libcudnn7 \
+  && apt install -y --no-install-recommends libnccl2 libnccl-dev libcudnn7 \
   && : 'Install other development packages' \
   && apt install -y --no-install-recommends cmake autoconf automake libtool flex \
   && : 'Install OpenSSH server for Open MPI' \
@@ -59,7 +59,7 @@ RUN : 'OpenCV: Install numpy before build' \
 ENV CUDA_PATH=/usr/local/cuda
 ENV PATH=$CUDA_PATH/bin:$PATH
 ENV CPATH=$CUDA_PATH/include:/usr/local/include:$CPATH
-ENV LD_LIBRARY_PATH=$CUDA_PATH/lib64:$CUDA_PATH/lib64/stubs:/usr/local/lib:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH=$CUDA_PATH/lib64:/usr/local/lib:$LD_LIBRARY_PATH
 
 RUN : 'Install Chainer' \
   && pip3 install cupy==${DOCKERBUILD_CUPY_VERSION} chainer==${DOCKERBUILD_CHAINER_VERSION} chainermn
